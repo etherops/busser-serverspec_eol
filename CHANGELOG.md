@@ -1,5 +1,10 @@
 # You should use Kitchen::Verifier::Shell + Serverspec
 
+## 0.5.11 2019-02-28
+
+* Install bundler 1.17.3 for Ruby versions < 2.3
+* fork and rename to busser-serverspec_eol
+  
 ## 0.5.10 2016-08-12
 
 * use container-based test at travis-ci.

@@ -23,9 +23,13 @@ require 'rubygems/dependency_installer'
 #
 # @author HIGUCHI Daisuke <d-higuchi@creationline.com>
 #
-class Busser::RunnerPlugin::Serverspec < Busser::RunnerPlugin::Base
+class Busser::RunnerPlugin::ServerspecEol < Busser::RunnerPlugin::Base
   postinstall do
-    install_gem('bundler')
+    if Gem::Version.new(RUBY_VERSION.dup) < Gem::Version.new('2.3')
+      install_gem('bundler', '~> 1.17.0')
+    else
+      install_gem('bundler')
+    end
   end
 
   def test
@@ -33,7 +37,7 @@ class Busser::RunnerPlugin::Serverspec < Busser::RunnerPlugin::Base
     install_serverspec
 
     runner = File.join(File.dirname(__FILE__), %w{.. serverspec runner.rb})
-    run_ruby_script!("#{runner} #{suite_path('serverspec').to_s}")
+    run_ruby_script!("#{runner} #{suite_path('serverspec_eol').to_s}")
   end
 
   private
@@ -57,7 +61,8 @@ class Busser::RunnerPlugin::Serverspec < Busser::RunnerPlugin::Base
     Gem::Specification.reset
     if Array(Gem::Specification.find_all_by_name('serverspec')).size == 0
       if Gem::Version.new(RUBY_VERSION.dup) < Gem::Version.new('2.3')
-        raise "Ruby < 2.3 is EOLed and no longer supported"
+        banner('Installing net-ssh < 2.10')
+        install_gem('net-ssh', '< 2.10')
       end
       banner('Installing Serverspec..')
       spec = install_gem('serverspec')
